@@ -18,7 +18,6 @@ use tui::{
     Terminal,
     text::Text,
 };
-
 mod rendering;
 mod game;
 mod events;
@@ -51,23 +50,18 @@ fn event_loop(events_tx: mpsc::Sender<events::Event<KeyEvent>>) {
 fn game_loop<B>(terminal: &mut Terminal<B>, events_rx: mpsc::Receiver<events::Event<KeyEvent>>) -> Result<(), Box<dyn std::error::Error>>
 where B : Backend
 {
-    let mut game = game::Game::new();
+    let mut game = game::game::Game::new();
 
     loop {
-        // Wait
         let event = events_rx.recv()?;
-
-        // Update
-        let keep_looping = (&mut game).handle_event(event);
-        if !keep_looping {
+        let update = (&mut game).handle_event(event);
+        if update.quit {
             break;
         }
 
-        // Draw
-        let visuals = &game.get_visuals();
         terminal.draw(|frame| {
 	    let size = frame.size();
-            let content = rendering::render(&visuals);
+            let content = rendering::render(&update.visuals);
             let board = Paragraph::new(Text::from(content))
                 .style(Style::default().fg(Color::LightCyan))
                 .block(
