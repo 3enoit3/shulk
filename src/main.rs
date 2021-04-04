@@ -47,11 +47,9 @@ fn event_loop(events_tx: mpsc::Sender<events::Event<KeyEvent>>) {
 }
 
 /// Main loop
-fn game_loop<B>(terminal: &mut Terminal<B>, events_rx: mpsc::Receiver<events::Event<KeyEvent>>) -> Result<(), Box<dyn std::error::Error>>
+fn game_loop<B>(terminal: &mut Terminal<B>, events_rx: mpsc::Receiver<events::Event<KeyEvent>>, mut game: game::game::Game) -> Result<(), Box<dyn std::error::Error>>
 where B : Backend
 {
-    let mut game = game::game::Game::new();
-
     loop {
         let event = events_rx.recv()?;
         let update = (&mut game).handle_event(event);
@@ -80,6 +78,8 @@ where B : Backend
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let game = game::game::Game::new();
+
     enable_raw_mode().expect("can run in raw mode");
 
     let stdout = io::stdout();
@@ -89,7 +89,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let (tx, rx) = mpsc::channel();
     event_loop(tx);
-    let game_exit_status = game_loop(&mut terminal, rx);
+    let game_exit_status = game_loop(&mut terminal, rx, game);
 
     disable_raw_mode()?;
     terminal.show_cursor()?;

@@ -10,7 +10,6 @@ pub struct GameUpdate {
     pub quit: bool,
 }
 
-// Game
 pub struct Game {
     world: world::World,
     handler: Box<dyn handlers::GameHandler>,

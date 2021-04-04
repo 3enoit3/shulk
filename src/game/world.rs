@@ -21,11 +21,11 @@ impl Board {
             w += 1;
             h = s.len();
             for c in s.chars() {
-                if c == 'E' {
-                    tiles.push(Tile::Empty{});
+                if c == ' ' {
+                    tiles.push(Tile::Inaccessible{});
                 }
                 else {
-                    tiles.push(Tile::Inaccessible{});
+                    tiles.push(Tile::Empty{});
                 }
             }
         }
@@ -63,10 +63,6 @@ pub struct Terminator {
 }
 
 impl Terminator {
-    pub fn new() -> Terminator {
-        Terminator{x:0, y:0}
-    }
-
     pub fn get_visual(&self) -> rendering::Visual {
         rendering::Visual{content:3, x:self.x, y:self.y}
     }
@@ -80,8 +76,32 @@ pub struct World {
 
 impl World {
     pub fn new() -> World {
-        let board = Board::from_string("EEE\n E \nEEE");
-        let terminator = Terminator::new();
+        let board_desc =
+"                   EEE     
+                   EEE     
+                   EEE     
+                    D      
+                    E      
+                    E      
+                    E     I
+                    E     E
+              EDEEEEEEEEEEE
+              E     E     E
+      EEE     E     E     E
+SSSSSDEEEDEEEEEEEEEEEEEEEEE
+      EEE           E     I
+       D            E      
+       E            E      
+       E            E      
+       E            E      
+       E            E      
+       D   I      IEEEI    
+      EEE  E               
+      EEEEDE               
+      EEE  E               
+           I               ";
+        let board = Board::from_string(board_desc);
+        let terminator = Terminator{x:0, y:11};
         World{board:board, terminator:terminator}
     }
 
