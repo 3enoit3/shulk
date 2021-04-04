@@ -16,16 +16,18 @@ impl handlers::GameHandler for MoveTerminatorHandler {
                     return handlers::EventUpdate{visuals:vec![], events:handlers::EventHandling::Quit};
                 }
                 KeyCode::Up => {
-                    world.move_terminator_if_possible(0, -1);
+                    let (dx, dy) = world::move_frontward(&world.terminator.dir);
+                    world.move_terminator_if_possible(dx, dy);
                 }
                 KeyCode::Down => {
-                    world.move_terminator_if_possible(0, 1);
+                    let (dx, dy) = world::move_backward(&world.terminator.dir);
+                    world.move_terminator_if_possible(dx, dy);
                 }
                 KeyCode::Left => {
-                    world.move_terminator_if_possible(-1, 0);
+                    world.terminator.dir = world::rotate_left(&world.terminator.dir);
                 }
                 KeyCode::Right => {
-                    world.move_terminator_if_possible(1, 0);
+                    world.terminator.dir = world::rotate_right(&world.terminator.dir);
                 }
                 _ => {}
             },

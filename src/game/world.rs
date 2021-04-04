@@ -57,15 +57,66 @@ impl Board {
 }
 
 // Terminators
+pub enum Direction {
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
+pub fn rotate_left(dir: &Direction) -> Direction {
+    match dir {
+        Direction::Up => Direction::Left,
+        Direction::Down => Direction::Right,
+        Direction::Left => Direction::Down,
+        Direction::Right => Direction::Up,
+    }
+}
+
+pub fn rotate_right(dir: &Direction) -> Direction {
+    match dir {
+        Direction::Up => Direction::Right,
+        Direction::Down => Direction::Left,
+        Direction::Left => Direction::Up,
+        Direction::Right => Direction::Down,
+    }
+}
+
+pub fn move_frontward(dir: &Direction) -> (i32, i32) {
+    match dir {
+        Direction::Up => (0, -1),
+        Direction::Down => (0, 1),
+        Direction::Right => (1, 0),
+        Direction::Left => (-1, 0),
+    }
+}
+
+pub fn move_backward(dir: &Direction) -> (i32, i32) {
+    match dir {
+        Direction::Up => (0, 1),
+        Direction::Down => (0, -1),
+        Direction::Right => (-1, 0),
+        Direction::Left => (1, 0),
+    }
+}
+
 pub struct Terminator {
     pub x: u32,
     pub y: u32,
+    pub dir: Direction,
 }
 
 impl Terminator {
     pub fn get_visual(&self) -> rendering::Visual {
-        rendering::Visual{content:3, x:self.x, y:self.y}
+        let content = match self.dir {
+            Direction::Up => 2,
+            Direction::Down => 3,
+            Direction::Right => 4,
+            Direction::Left => 5,
+        };
+        rendering::Visual{content:content, x:self.x, y:self.y}
     }
+
 }
 
 // World
@@ -101,7 +152,7 @@ SSSSSDEEEDEEEEEEEEEEEEEEEEE
       EEE  E               
            I               ";
         let board = Board::from_string(board_desc);
-        let terminator = Terminator{x:0, y:11};
+        let terminator = Terminator{x:0, y:11, dir:Direction::Right};
         World{board:board, terminator:terminator}
     }
 
