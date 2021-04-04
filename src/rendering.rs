@@ -7,6 +7,17 @@ pub struct Visual {
     pub content: u32,
     pub x: u32,
     pub y: u32,
+    pub id: Option<u32>,
+}
+
+pub enum Anchor {
+    Position(u32, u32),
+    Item(u32),
+}
+
+pub struct Annotation {
+    pub text: String,
+    pub anchor: Anchor,
 }
 
 pub fn render(visuals: &[Visual]) -> String {

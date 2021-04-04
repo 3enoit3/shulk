@@ -40,7 +40,7 @@ impl Board {
                     Tile::Empty => 1,
                     Tile::Inaccessible => 0,
                 };
-                visuals.push(rendering::Visual{content:content, x:x as u32, y:y as u32});
+                visuals.push(rendering::Visual{content:content, x:x as u32, y:y as u32, id:None});
             }
         }
         visuals
@@ -101,9 +101,11 @@ pub fn move_backward(dir: &Direction) -> (i32, i32) {
 }
 
 pub struct Terminator {
+    pub name: String,
     pub x: u32,
     pub y: u32,
     pub dir: Direction,
+    pub aps: u32,
 }
 
 impl Terminator {
@@ -114,9 +116,8 @@ impl Terminator {
             Direction::Right => 4,
             Direction::Left => 5,
         };
-        rendering::Visual{content:content, x:self.x, y:self.y}
+        rendering::Visual{content:content, x:self.x, y:self.y, id:None}
     }
-
 }
 
 // World
@@ -152,7 +153,7 @@ SSSSSDEEEDEEEEEEEEEEEEEEEEE
       EEE  E               
            I               ";
         let board = Board::from_string(board_desc);
-        let terminator = Terminator{x:0, y:11, dir:Direction::Right};
+        let terminator = Terminator{name:"Brother Omnio".to_string(), x:0, y:11, dir:Direction::Right, aps:4};
         World{board:board, terminator:terminator}
     }
 

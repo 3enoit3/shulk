@@ -1,4 +1,5 @@
 use crate::events;
+use crate::rendering;
 use crate::game::world;
 use super::handlers;
 use crossterm::{
@@ -13,7 +14,7 @@ impl handlers::GameHandler for MoveTerminatorHandler {
         match event {
             events::Event::Input(key_event) => match key_event.code {
                 KeyCode::Char('q') => {
-                    return handlers::EventUpdate{visuals:vec![], events:handlers::EventHandling::Quit};
+                    return handlers::EventUpdate::quit();
                 }
                 KeyCode::Up => {
                     let (dx, dy) = world::move_frontward(&world.terminator.dir);
@@ -34,6 +35,7 @@ impl handlers::GameHandler for MoveTerminatorHandler {
             events::Event::Tick => {}
         }
         let visuals = world.get_simple_visuals();
-        handlers::EventUpdate{visuals:visuals, events:handlers::EventHandling::Keep}
+        let annotations = vec![rendering::Annotation{text:world.terminator.name.clone(), anchor:rendering::Anchor::Position(10, 30)}];
+        handlers::EventUpdate{visuals:visuals, events:handlers::EventHandling::Keep, annotations:annotations}
     }
 }
