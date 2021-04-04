@@ -3,9 +3,7 @@ use crate::events;
 use super::world;
 use super::handlers;
 use super::handler_move_terminator::MoveTerminatorHandler;
-use crossterm::{
-    event::{KeyCode, KeyEvent},
-};
+use crossterm::event::KeyEvent;
 
 pub struct GameUpdate {
     pub visuals: Vec<rendering::Visual>,

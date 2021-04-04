@@ -9,15 +9,15 @@ use std::thread;
 use std::time::{Duration, Instant};
 use tui::{
     backend::{Backend, CrosstermBackend},
-    layout::{Alignment, Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    text::{Span, Spans},
+    layout::Rect,
+    style::{Color, Style},
     widgets::{
-        Block, BorderType, Borders, Cell, List, ListItem, ListState, Paragraph, Row, Table, Tabs,
+        Block, BorderType, Borders, Paragraph,
     },
     Terminal,
     text::Text,
 };
+
 mod rendering;
 mod game;
 mod events;

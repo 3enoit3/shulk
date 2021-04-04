@@ -5,7 +5,7 @@ use crossterm::event::KeyEvent;
 
 pub enum EventHandling {
     Keep,
-    SetHandler(String),
+//    SetHandler(String),
     Quit,
 }
 

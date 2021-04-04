@@ -1,4 +1,3 @@
-use crate::rendering;
 use crate::events;
 use crate::game::world;
 use super::handlers;
