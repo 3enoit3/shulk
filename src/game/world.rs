@@ -1,4 +1,3 @@
-use std::cmp;
 use array2d::Array2D;
 use crate::rendering;
 
@@ -102,6 +101,7 @@ pub fn move_backward(dir: &Direction) -> (i32, i32) {
 
 pub struct Terminator {
     pub name: String,
+    pub id: u32,
     pub x: u32,
     pub y: u32,
     pub dir: Direction,
@@ -153,7 +153,7 @@ SSSSSDEEEDEEEEEEEEEEEEEEEEE
       EEE  E               
            I               ";
         let board = Board::from_string(board_desc);
-        let terminator = Terminator{name:"Brother Omnio".to_string(), x:0, y:11, dir:Direction::Right, aps:4};
+        let terminator = Terminator{name:"Brother Omnio".to_string(), id:0, x:0, y:11, dir:Direction::Right, aps:10};
         World{board:board, terminator:terminator}
     }
 
@@ -163,14 +163,12 @@ SSSSSDEEEDEEEEEEEEEEEEEEEEE
         visuals
     }
 
-    pub fn move_terminator_if_possible(&mut self, dx: i32, dy: i32) {
-        let x = cmp::max(0i32, self.terminator.x as i32 + dx) as u32;
-        let y = cmp::max(0i32, self.terminator.y as i32 + dy) as u32;
-
-        if self.board.is_accessible(x, y) {
-            self.terminator.x = x;
-            self.terminator.y = y;
+    pub fn can_move(&self, terminator: &Terminator, dx: i32, dy: i32) -> bool {
+        let x = terminator.x as i32 + dx;
+        let y = terminator.y as i32 + dy;
+        if x < 0 || y < 0 {
+            return false;
         }
+        self.board.is_accessible(x as u32, y as u32)
     }
 }
-

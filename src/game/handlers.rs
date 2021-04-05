@@ -11,13 +11,13 @@ pub enum EventHandling {
 
 pub struct EventUpdate {
     pub visuals: Vec<rendering::Visual>,
+    pub texts: Vec<rendering::Text>,
     pub events: EventHandling,
-    pub annotations: Vec<rendering::Annotation>,
 }
 
 impl EventUpdate {
     pub fn quit() -> EventUpdate {
-        EventUpdate{visuals:vec![], events:EventHandling::Quit, annotations:vec![]}
+        EventUpdate{visuals:vec![], texts:vec![], events:EventHandling::Quit}
     }
 }
 

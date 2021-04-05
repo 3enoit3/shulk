@@ -7,6 +7,7 @@ use crossterm::event::KeyEvent;
 
 pub struct GameUpdate {
     pub visuals: Vec<rendering::Visual>,
+    pub texts: Vec<rendering::Text>,
     pub quit: bool,
 }
 
@@ -28,6 +29,6 @@ impl Game {
             handlers::EventHandling::Quit => true,
             _ => false,
         };
-        GameUpdate{visuals:results.visuals, quit:quit}
+        GameUpdate{visuals:results.visuals, texts:results.texts, quit:quit}
     }
 }

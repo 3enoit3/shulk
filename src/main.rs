@@ -59,7 +59,7 @@ where B : Backend
 
         terminal.draw(|frame| {
 	    let size = frame.size();
-            let content = rendering::render(&update.visuals);
+            let content = rendering::render(&update.visuals, &update.texts);
             let board = Paragraph::new(Text::from(content))
                 .style(Style::default().fg(Color::LightCyan))
                 .block(

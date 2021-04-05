@@ -10,17 +10,12 @@ pub struct Visual {
     pub id: Option<u32>,
 }
 
-pub enum Anchor {
-    Position(u32, u32),
-    Item(u32),
+pub enum Text {
+    Title(String),
+    ItemAnnotation(u32, String),
 }
 
-pub struct Annotation {
-    pub text: String,
-    pub anchor: Anchor,
-}
-
-pub fn render(visuals: &[Visual]) -> String {
+pub fn render(visuals: &[Visual], texts: &[Text]) -> String {
     let imgs = vec![' ', '□', '△', '▽', '>', '<'];
     let render_img = |img| {
         match imgs.get(img as usize) {
@@ -32,14 +27,19 @@ pub fn render(visuals: &[Visual]) -> String {
     let (w, h) = get_span(visuals);
     let row_len = w + 1;
     let mut chars: Vec<char> = iter::repeat(' ').take((row_len * h) as usize).collect();
-    for v in visuals.iter() {
-        let i: u32 = v.y * row_len + v.x;
-        chars[i as usize] = render_img(v.content);
-    }
+    let mut paint = |x, y, c| {
+        let i: u32 = y * row_len + x;
+        chars[i as usize] = c;
+    };
+
     for y in 0..h {
-        let i: u32 = y * row_len + w;
-        chars[i as usize] = '\n';
+        paint(w, y, '\n');
     }
+
+    for v in visuals.iter() {
+        paint(v.x, v.y, render_img(v.content));
+    }
+
     String::from_iter(chars)
 }
 
