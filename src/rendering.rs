@@ -15,6 +15,54 @@ pub enum Text {
     ItemAnnotation(u32, String),
 }
 
+struct Canvas {
+    w: u32,
+    h: u32,
+    chars: Vec<char>,
+}
+
+impl Canvas {
+    pub fn new(w: u32, h: u32) -> Canvas {
+        let chars: Vec<char> = iter::repeat(' ').take((w * h) as usize).collect();
+        Canvas{w:w, h:h, chars:chars}
+    }
+
+    pub fn drawChar(&mut self, x: u32, y: u32, c: char) {
+        if x >= self.w || y >= self.h {
+            return;
+        }
+        let offset = (y * self.w + x) as usize;
+        self.chars[offset] = c;
+    }
+
+    pub fn drawString(&mut self, x: u32, y: u32, s: &str) {
+        if x >= self.w || y >= self.h {
+            return;
+        }
+        let mut i = x;
+        for c in s.chars() {
+            self.drawChar(i, y, c);
+
+            i += 1;
+            if i >= self.w {
+                return;
+            }
+        }
+    }
+
+    pub fn toString(&self) -> String {
+        let len = self.chars.len() + self.h as usize;
+        let mut chars = Vec::<char>::with_capacity(len);
+        for y in 0..self.h {
+            let from = (y * self.w) as usize;
+            let to = from + self.w as usize;
+            chars.extend_from_slice(&self.chars[from..to]);
+            chars.push('\n');
+        }
+        String::from_iter(chars)
+    }
+}
+
 pub fn render(visuals: &[Visual], texts: &[Text]) -> String {
     let imgs = vec![' ', '□', '△', '▽', '>', '<'];
     let render_img = |img| {
@@ -25,22 +73,24 @@ pub fn render(visuals: &[Visual], texts: &[Text]) -> String {
     };
 
     let (w, h) = get_span(visuals);
-    let row_len = w + 1;
-    let mut chars: Vec<char> = iter::repeat(' ').take((row_len * h) as usize).collect();
-    let mut paint = |x, y, c| {
-        let i: u32 = y * row_len + x;
-        chars[i as usize] = c;
-    };
+    let mut canvas = Canvas::new(w, h + 4);
 
-    for y in 0..h {
-        paint(w, y, '\n');
-    }
-
+    // Visuals
     for v in visuals.iter() {
-        paint(v.x, v.y, render_img(v.content));
+        canvas.drawChar(v.x, v.y, render_img(v.content));
     }
 
-    String::from_iter(chars)
+    // Texts
+    let mut y = h + 2;
+    for t in texts.iter() {
+        match t {
+            Text::ItemAnnotation(id, s) => canvas.drawString(0, y, s),
+            _ => (),
+        };
+        y += 1;
+    }
+
+    canvas.toString()
 }
 
 fn get_span(visuals: &[Visual]) -> (u32, u32) {
