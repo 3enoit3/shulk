@@ -1,5 +1,5 @@
 use crate::events;
-use crate::rendering;
+use crate::graphics;
 use crate::game::world;
 use super::handlers;
 use crossterm::{
@@ -11,9 +11,9 @@ pub struct MoveTerminatorHandler {
 
 impl handlers::GameHandler for MoveTerminatorHandler {
     fn handle_event(&mut self, world: &mut world::World, event: events::Event<KeyEvent>) -> handlers::EventUpdate {
-        let mut texts = Vec::<rendering::Text>::new();
+        let mut texts = Vec::<graphics::Text>::new();
         for t in &world.terminators {
-            let text = rendering::Text::ItemAnnotation(t.id, t.name.clone());
+            let text = graphics::Text::ItemAnnotation(t.id, t.name.clone());
             texts.push(text);
         }
 

@@ -1,4 +1,4 @@
-use crate::rendering;
+use crate::graphics;
 use crate::events;
 use super::world;
 use super::handlers;
@@ -6,8 +6,8 @@ use super::handler_move_terminator::MoveTerminatorHandler;
 use crossterm::event::KeyEvent;
 
 pub struct GameUpdate {
-    pub visuals: Vec<rendering::Visual>,
-    pub texts: Vec<rendering::Text>,
+    pub visuals: Vec<graphics::Visual>,
+    pub texts: Vec<graphics::Text>,
     pub quit: bool,
 }
 

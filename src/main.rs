@@ -21,6 +21,7 @@ use tui::{
 mod rendering;
 mod game;
 mod events;
+mod graphics;
 
 fn event_loop(events_tx: mpsc::Sender<events::Event<KeyEvent>>) {
     let tick_rate = Duration::from_millis(30);
@@ -59,7 +60,7 @@ where B : Backend
 
         terminal.draw(|frame| {
 	    let size = frame.size();
-            let content = rendering::render(&update.visuals, &update.texts);
+            let content = rendering::rendering::render(&update.visuals, &update.texts);
             let board = Paragraph::new(Text::from(content))
                 .style(Style::default().fg(Color::LightCyan))
                 .block(

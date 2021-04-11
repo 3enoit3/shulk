@@ -1,4 +1,4 @@
-use crate::rendering;
+use crate::graphics;
 use crate::events;
 use crate::game::world;
 use crossterm::event::KeyEvent;
@@ -10,8 +10,8 @@ pub enum EventHandling {
 }
 
 pub struct EventUpdate {
-    pub visuals: Vec<rendering::Visual>,
-    pub texts: Vec<rendering::Text>,
+    pub visuals: Vec<graphics::Visual>,
+    pub texts: Vec<graphics::Text>,
     pub events: EventHandling,
 }
 

@@ -1,5 +1,7 @@
+
 use array2d::Array2D;
-use crate::rendering;
+
+use crate::graphics;
 use super::position;
 
 // Board
@@ -32,15 +34,15 @@ impl Board {
         Board{tiles:Array2D::from_row_major(&tiles, w, h)}
     }
 
-    pub fn get_visuals(&self) -> Vec<rendering::Visual> {
-        let mut visuals = Vec::<rendering::Visual>::new();
+    pub fn get_visuals(&self) -> Vec<graphics::Visual> {
+        let mut visuals = Vec::<graphics::Visual>::new();
         for (y, row_iter) in self.tiles.rows_iter().enumerate() {
             for (x, tile) in row_iter.enumerate() {
                 let content = match tile {
                     Tile::Empty => 1,
                     Tile::Inaccessible => 0,
                 };
-                visuals.push(rendering::Visual{content, x:x as u32, y:y as u32, id:None});
+                visuals.push(graphics::Visual{content, x:x as u32, y:y as u32, id:None});
             }
         }
         visuals
@@ -65,14 +67,14 @@ pub struct Terminator {
 }
 
 impl Terminator {
-    pub fn get_visual(&self) -> rendering::Visual {
+    pub fn get_visual(&self) -> graphics::Visual {
         let content = match self.pos.dir {
             position::Direction::Up => 2,
             position::Direction::Down => 3,
             position::Direction::Right => 4,
             position::Direction::Left => 5,
         };
-        rendering::Visual{content, x:self.pos.x, y:self.pos.y, id:None}
+        graphics::Visual{content, x:self.pos.x, y:self.pos.y, id:None}
     }
 }
 
@@ -158,7 +160,7 @@ SSSSSDEEEDEEEEEEEEEEEEEEEEE
         World{board:board, terminators:terminators}
     }
 
-    pub fn get_simple_visuals(&self) -> Vec<rendering::Visual> {
+    pub fn get_simple_visuals(&self) -> Vec<graphics::Visual> {
         let mut visuals = self.board.get_visuals();
         for t in &self.terminators {
             visuals.push(t.get_visual());
