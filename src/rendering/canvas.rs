@@ -53,6 +53,27 @@ impl Canvas {
         }
     }
 
+    pub fn draw_connector(&mut self, x0: u32, y0: u32, x1: u32, y1: u32) {
+        for x in x0+1..x1 {
+            self.draw_char(x, y0, '─');
+        }
+        if y0 == y1 {
+            return;
+        }
+        if y0 > y1 {
+            self.draw_char(x1, y0, '┘');
+            for y in y1+1..y0 {
+                self.draw_char(x1, y, '│');
+            }
+        }
+        else {
+            self.draw_char(x1, y0, '┐');
+            for y in y0+1..y1 {
+                self.draw_char(x1, y, '│');
+            }
+        }
+    }
+
     pub fn to_string(&self) -> String {
         let len = self.chars.len() + self.h as usize;
         let mut chars = Vec::<char>::with_capacity(len);

@@ -6,14 +6,6 @@ use super::canvas;
 use super::layout;
 
 pub fn render(visuals: &[graphics::Visual], texts: &[graphics::Text]) -> String {
-    let imgs = vec![' ', '□', '△', '▽', '>', '<'];
-    let render_img = |img| {
-        match imgs.get(img as usize) {
-            Some(c) => *c,
-            None => 'X',
-        }
-    };
-
     let (w, h) = layout::get_span(visuals);
     let text_len = layout::get_max_text_len(texts);
     let vx = text_len + 10;
@@ -32,11 +24,20 @@ pub fn render(visuals: &[graphics::Visual], texts: &[graphics::Text]) -> String 
             graphics::Text::ItemAnnotation(id, s) => {
                 canvas.draw_string(1, y+1, s);
                 canvas.draw_box(0, y, (s.len() + 1) as u32, 3);
+                canvas.draw_connector((s.len() + 1) as u32, y+1, vx+y, vy+11);
             },
             _ => (),
         };
-        y += 4;
+        y += 3;
     }
 
     canvas.to_string()
+}
+
+fn render_img(img: u32) -> char {
+    let imgs = vec![' ', '□', '△', '▽', '>', '<'];
+    match imgs.get(img as usize) {
+        Some(c) => *c,
+        None => 'X',
+    }
 }
