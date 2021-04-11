@@ -24,10 +24,10 @@ struct Canvas {
 impl Canvas {
     pub fn new(w: u32, h: u32) -> Canvas {
         let chars: Vec<char> = iter::repeat(' ').take((w * h) as usize).collect();
-        Canvas{w:w, h:h, chars:chars}
+        Canvas{w, h, chars}
     }
 
-    pub fn drawChar(&mut self, x: u32, y: u32, c: char) {
+    pub fn draw_char(&mut self, x: u32, y: u32, c: char) {
         if x >= self.w || y >= self.h {
             return;
         }
@@ -35,13 +35,13 @@ impl Canvas {
         self.chars[offset] = c;
     }
 
-    pub fn drawString(&mut self, x: u32, y: u32, s: &str) {
+    pub fn draw_string(&mut self, x: u32, y: u32, s: &str) {
         if x >= self.w || y >= self.h {
             return;
         }
         let mut i = x;
         for c in s.chars() {
-            self.drawChar(i, y, c);
+            self.draw_char(i, y, c);
 
             i += 1;
             if i >= self.w {
@@ -50,7 +50,23 @@ impl Canvas {
         }
     }
 
-    pub fn toString(&self) -> String {
+    pub fn draw_box(&mut self, x: u32, y: u32, w: u32, h: u32) {
+        self.draw_char(x, y, '┌');
+        self.draw_char(x+w, y, '┐');
+        self.draw_char(x, y+h-1, '└');
+        self.draw_char(x+w, y+h-1, '┘');
+
+        for i in x+1..x+w {
+            self.draw_char(i, y, '─');
+            self.draw_char(i, y+h-1, '─');
+        }
+        for i in y+1..(y+h-1) {
+            self.draw_char(x, i, '│');
+            self.draw_char(x+w, i, '│');
+        }
+    }
+
+    pub fn to_string(&self) -> String {
         let len = self.chars.len() + self.h as usize;
         let mut chars = Vec::<char>::with_capacity(len);
         for y in 0..self.h {
@@ -73,24 +89,30 @@ pub fn render(visuals: &[Visual], texts: &[Text]) -> String {
     };
 
     let (w, h) = get_span(visuals);
-    let mut canvas = Canvas::new(w, h + 4);
+    let text_len = get_max_text_len(texts);
+    let vx = text_len + 10;
+    let vy = 5;
+    let mut canvas = Canvas::new(vx + w, vy + h);
 
     // Visuals
     for v in visuals.iter() {
-        canvas.drawChar(v.x, v.y, render_img(v.content));
+        canvas.draw_char(vx + v.x, vy + v.y, render_img(v.content));
     }
 
     // Texts
-    let mut y = h + 2;
+    let mut y = 5;
     for t in texts.iter() {
         match t {
-            Text::ItemAnnotation(id, s) => canvas.drawString(0, y, s),
+            Text::ItemAnnotation(id, s) => {
+                canvas.draw_string(1, y+1, s);
+                canvas.draw_box(0, y, (s.len() + 1) as u32, 3);
+            },
             _ => (),
         };
-        y += 1;
+        y += 4;
     }
 
-    canvas.toString()
+    canvas.to_string()
 }
 
 fn get_span(visuals: &[Visual]) -> (u32, u32) {
@@ -101,4 +123,15 @@ fn get_span(visuals: &[Visual]) -> (u32, u32) {
         h = cmp::max(h, v.y + 1);
     }
     (w, h)
+}
+
+fn get_max_text_len(texts: &[Text]) -> u32 {
+    let mut m: u32 = 0;
+    for t in texts.iter() {
+        match t {
+            Text::ItemAnnotation(_, s) => m = cmp::max(m, s.len() as u32),
+            _ => (),
+        }
+    }
+    m
 }

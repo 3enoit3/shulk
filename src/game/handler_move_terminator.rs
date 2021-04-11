@@ -11,39 +11,55 @@ pub struct MoveTerminatorHandler {
 
 impl handlers::GameHandler for MoveTerminatorHandler {
     fn handle_event(&mut self, world: &mut world::World, event: events::Event<KeyEvent>) -> handlers::EventUpdate {
-        let mut texts = vec![rendering::Text::ItemAnnotation(world.terminator.id, world.terminator.name.clone())];
+        let mut texts = Vec::<rendering::Text>::new();
+        for t in &world.terminators {
+            let text = rendering::Text::ItemAnnotation(t.id, t.name.clone());
+            texts.push(text);
+        }
+
+        let selected = 4;
+        let mut pos = world.terminators[selected].pos.clone();
+        let mut aps = world.terminators[selected].aps;
         match event {
             events::Event::Input(key_event) => match key_event.code {
                 KeyCode::Char('q') => {
                     return handlers::EventUpdate::quit();
                 }
                 KeyCode::Up => {
-                    let (dx, dy) = world::move_frontward(&world.terminator.dir);
-                    if world.terminator.aps > 0 && world.can_move(&world.terminator, dx, dy) {
-                        world.terminator.x = (world.terminator.x as i32 + dx) as u32;
-                        world.terminator.y = (world.terminator.y as i32 + dy) as u32;
-                        world.terminator.aps -= 1;
+                    let (dx, dy) = pos.dir.move_frontward();
+                    if aps > 0 && world.can_move(&pos, dx, dy) {
+                        pos.move_by(dx, dy);
+                        aps -= 1;
                     }
                 }
                 KeyCode::Down => {
-                    let (dx, dy) = world::move_backward(&world.terminator.dir);
-                    if world.terminator.aps > 0 && world.can_move(&world.terminator, dx, dy) {
-                        world.terminator.x = (world.terminator.x as i32 + dx) as u32;
-                        world.terminator.y = (world.terminator.y as i32 + dy) as u32;
-                        world.terminator.aps -= 1;
+                    let (dx, dy) = pos.dir.move_backward();
+                    if aps > 0 && world.can_move(&pos, dx, dy) {
+                        pos.move_by(dx, dy);
+                        aps -= 1;
                     }
                 }
                 KeyCode::Left => {
-                    world.terminator.dir = world::rotate_left(&world.terminator.dir);
+                    pos.rotate_left();
                 }
                 KeyCode::Right => {
-                    world.terminator.dir = world::rotate_right(&world.terminator.dir);
+                    pos.rotate_right();
                 }
                 _ => {}
             },
             events::Event::Tick => {}
         }
+        world.terminators[selected].pos = pos;
+        world.terminators[selected].aps = aps;
+
         let visuals = world.get_simple_visuals();
         handlers::EventUpdate{visuals:visuals, texts:texts, events:handlers::EventHandling::Keep}
     }
 }
+
+// self.a = build_value(self.a)
+// self.a.value()
+// self.a = self.build_value(a);
+// ! self.a = self.build_value(self.a) -> ?
+// ! self.change_value(self.a) -> ?
+// ! let &mut S = &mut self -> It cannot prove self is still valid when you use S
