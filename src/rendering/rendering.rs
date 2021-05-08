@@ -12,23 +12,19 @@ pub fn render(visuals: &[graphics::Visual], texts: &[graphics::Text]) -> String 
     let vy = 5;
     let mut canvas = canvas::Canvas::new(vx + w, vy + h);
 
+
     // Visuals
     for v in visuals.iter() {
         canvas.draw_char(vx + v.x, vy + v.y, render_img(v.content));
     }
 
     // Texts
-    let mut y = 5;
-    for t in texts.iter() {
-        match t {
-            graphics::Text::ItemAnnotation(id, s) => {
-                canvas.draw_string(1, y+1, s);
-                canvas.draw_box(0, y, (s.len() + 1) as u32, 3);
-                canvas.draw_connector((s.len() + 1) as u32, y+1, vx+y, vy+11);
-            },
-            _ => (),
-        };
-        y += 3;
+    let mut annotations = layout::collect(visuals, texts);
+    layout::place(&mut annotations);
+    for a in annotations.iter() {
+        canvas.draw_string(a.pos.x+1, a.pos.y+1, &a.text);
+        canvas.draw_box(a.pos.x, a.pos.y, a.w, a.h);
+        canvas.draw_connector(a.w, a.pos.y+1, vx+a.target_pos.x, vy+a.target_pos.y);
     }
 
     canvas.to_string()

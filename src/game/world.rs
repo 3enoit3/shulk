@@ -74,7 +74,7 @@ impl Terminator {
             position::Direction::Right => 4,
             position::Direction::Left => 5,
         };
-        graphics::Visual{content, x:self.pos.x, y:self.pos.y, id:None}
+        graphics::Visual{content, x:self.pos.x, y:self.pos.y, id:Some(self.id)}
     }
 }
 
@@ -152,9 +152,9 @@ SSSSSDEEEDEEEEEEEEEEEEEEEEE
         let board = Board::from_string(board_desc);
         let terminators = vec![
             Terminator{name:"Brother Omnio".to_string(), id:0, pos:position::Position{x:0, y:11, dir:position::Direction::Right}, aps:50},
-            Terminator{name:"Brother Claudio".to_string(), id:0, pos:position::Position{x:1, y:11, dir:position::Direction::Right}, aps:50},
-            Terminator{name:"Brother Goriel".to_string(), id:0, pos:position::Position{x:2, y:11, dir:position::Direction::Right}, aps:50},
-            Terminator{name:"Brother Zael".to_string(), id:0, pos:position::Position{x:3, y:11, dir:position::Direction::Right}, aps:50},
+            Terminator{name:"Brother Claudio".to_string(), id:1, pos:position::Position{x:1, y:11, dir:position::Direction::Right}, aps:50},
+            Terminator{name:"Brother Goriel".to_string(), id:2, pos:position::Position{x:2, y:11, dir:position::Direction::Right}, aps:50},
+            Terminator{name:"Brother Zael".to_string(), id:3, pos:position::Position{x:3, y:11, dir:position::Direction::Right}, aps:50},
             Terminator{name:"Sergeant Lorenzo".to_string(), id:4, pos:position::Position{x:4, y:11, dir:position::Direction::Right}, aps:50},
         ];
         World{board:board, terminators:terminators}
